@@ -10,6 +10,7 @@ buildApp.config(function($routeProvider){
 		.otherwise({redirectTo: '/'});
 	})
 	.controller('BuildController', function($scope, $interval, buildFactory) {
+		$scope.buildSucceed = true;
 		$scope.buildVisible = true;
 		$scope.statusVisible = true;
 
@@ -40,7 +41,7 @@ buildApp.config(function($routeProvider){
 		$scope.reload = function() {
 			//$scope.statusVisible = true;
 			//$scope.buildVisible = !$scope.buildVisible;
-
+		
 			if($scope.buildVisible)
 			{
 				buildFactory.getBuilds()
@@ -60,6 +61,20 @@ buildApp.config(function($routeProvider){
 					})
 					.then(function() {
 						$scope.builds = $scope.buildResponses.map(function(b) { return buildFactory.decodeBuild(b, $scope.runningBuilds); });
+						var badChildren = $scope.builds.filter(function(b) { return b.status == 'FAILURE' });
+						if(badChildren.length > 0)
+						{
+							if($scope.buildSucceed == true)
+							{
+								var audio = new Audio('audio/Jamel.mp3');
+								audio.play();
+							}
+							$scope.buildSucceed = false;
+						}
+						else
+						{
+							$scope.buildSucceed = true;
+						}
 					});
 			}
 			else{
