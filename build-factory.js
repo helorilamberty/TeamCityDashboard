@@ -2,23 +2,24 @@ angular.module('buildApp').factory('buildFactory', function($http) {
 	var factory = {};
 	  
 	var getBuildTypes = function() {
-		return $http.get('http://10.150.136.82:8109/guestAuth/app/rest/buildTypes?locator=start:0,count:100');
+		return $http.get('https://integration01.gaming1.com/guestAuth/app/rest/buildTypes?locator=start:0,count:100');
 	};
 	
 	var getBuildStatus = function(id) {
-		return $http.get('http://10.150.136.82:8109/guestAuth/app/rest/builds?locator=buildType:' + id + ',start:0,count:1&fields=build(id,status,state,buildType(name,id,projectName))');
+		return $http.get('https://integration01.gaming1.com/guestAuth/app/rest/builds?locator=buildType:' + id + ',start:0,count:1&fields=build(id,status,state,buildType(name,id,projectName),changes(change))');
 	};
 	
 	factory.getRunningBuilds = function() {
-		return $http.get('http://10.150.136.82:8109/guestAuth/app/rest/builds?locator=running:true');
+		return $http.get('https://integration01.gaming1.com/guestAuth/app/rest/builds?locator=running:true');
 	};
 	  
 	factory.getBuilds = function() {
 		return getBuildTypes().then(function getBuildStatuses(data){
-			var gets = data.data.buildType.map(function(currentBuildType) { 
+			var buildStatuses = data.data.buildType.map(function(currentBuildType) { 
 				return getBuildStatus(currentBuildType.id) 
 			});
-			return Promise.all(gets)
+			
+			return Promise.all(buildStatuses)
 		})
 	};
 	
@@ -35,7 +36,8 @@ angular.module('buildApp').factory('buildFactory', function($http) {
 				'status': build.status,
 				'state': state,
 				'project': build.buildType.projectName,
-				'projectGroup': build.buildType.projectName.split('::')[0].trim()
+				'projectGroup': build.buildType.projectName.split('::')[0].trim(),
+				'changes': groupBy(build.changes.change, function(x) { return x.username })
 		}
 	};
 	

@@ -10,8 +10,8 @@ buildApp.config(function($routeProvider){
 		.otherwise({redirectTo: '/'});
 	})
 	.controller('BuildController', function($scope, $interval, buildFactory) {
-		$scope.buildVisible = false;
-		$scope.statusVisible = false;
+		$scope.buildVisible = true;
+		$scope.statusVisible = true;
 
 		$scope.getGlyphClass = function(tile) {	
 			if(tile.state == 'running') {
@@ -38,8 +38,8 @@ buildApp.config(function($routeProvider){
 		}
 
 		$scope.reload = function() {
-			$scope.statusVisible = true;
-			$scope.buildVisible = !$scope.buildVisible;
+			//$scope.statusVisible = true;
+			//$scope.buildVisible = !$scope.buildVisible;
 
 			if($scope.buildVisible)
 			{
@@ -94,3 +94,19 @@ buildApp.config(function($routeProvider){
 
 			$interval(function () {$scope.reload()}, 10000);
 	});
+	
+	buildApp.directive('checkImage', function($http) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            attrs.$observe('ngSrc', function(ngSrc) {
+                $http.get(ngSrc).success(function(){
+                    //alert('image exist');
+                }).error(function(){
+                    //alert('image not exist');
+                    element.attr('src', '/images/anonymous.jpg'); // set default image
+                });
+            });
+        }
+    };
+});
