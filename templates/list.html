@@ -33,17 +33,17 @@
 	  
     <div class="container-fluid" ng-hide="!buildVisible">
 		<div class="row">
-    		<div  class="col-xs-6" ng-repeat="build in builds | orderBy:'status' | filter:nameFilter">
+    		<div  class="col-xs-6" ng-repeat="build in builds | orderBy:['status','-changesCount'] | filter:nameFilter">
 			<div ng-class="getPanelClass(build)">
 			<div  class="panel-body">
-			 <div class="col-xs-6">
+			 <div style="float:left;">
 			 <p>
 				<h5><span ng-class="getGlyphClass(build)" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;{{ build.name | limitTo:32 }}{{build.name.length > 32 ? '...' : ''}} &nbsp; {{ build.buildCount > 0 ? '(' + build.buildCount + ')' : ''}} </h5>
 				&nbsp;{{ build.project }}
 				</p>
 			 </div>
-			 <div class="col-xs-6" class="panel-body">
-				<span ng-repeat="change in (build.changes)"><img check-image ng-src="/images/{{ change[0].username }}.png" alt="Image" width="100"  />&nbsp;</span>
+			 <div style="float:right;">
+				<span ng-repeat="change in build.changes"><img check-image ng-src="/images/{{ change[0].username }}.png" alt="Image" width="90"  />&nbsp;</span>
 			 </div>
         	</div>
     	</div>

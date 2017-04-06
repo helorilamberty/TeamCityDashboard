@@ -29,6 +29,8 @@ angular.module('buildApp').factory('buildFactory', function($http) {
 		if(runningBuilds.indexOf(build.buildType.id) >= 0) {
 			state = 'running';
 		}
+		
+		var changes = groupBy(build.changes.change, function(x) { return x.username });
 
 		return { 
 				'id': build.id,
@@ -37,7 +39,8 @@ angular.module('buildApp').factory('buildFactory', function($http) {
 				'state': state,
 				'project': build.buildType.projectName,
 				'projectGroup': build.buildType.projectName.split('::')[0].trim(),
-				'changes': groupBy(build.changes.change, function(x) { return x.username })
+				'changes': changes,
+				'changesCount': changes.length
 		}
 	};
 	
